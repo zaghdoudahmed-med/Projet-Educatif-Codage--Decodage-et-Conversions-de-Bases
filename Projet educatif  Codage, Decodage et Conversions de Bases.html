@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codage & Décodage - Page Éducative</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #333;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        overflow: hidden;
+    }
+    
+    header {
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        color: white;
+        padding: 30px;
+        text-align: center;
+        position: relative;
+    }
+    
+    header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        animation: slideDown 1s ease;
+    }
+    
+    header .prof {
+        font-size: 1.2em;
+        margin-top: 15px;
+        padding: 10px 25px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 30px;
+        display: inline-block;
+        animation: pulse 2s infinite;
+    }
+    
+    header .prof strong { color: #ffd700; }
+    
+    @keyframes slideDown {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    nav {
+        background: #2c3e50;
+        padding: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    nav button {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+    
+    nav button:hover {
+        background: #2980b9;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    nav button.active {
+        background: #e74c3c;
+    }
+    
+    .section {
+        padding: 40px;
+        display: none;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .section.active { display: block; }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    h2 {
+        color: #2c3e50;
+        border-bottom: 3px solid #3498db;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    
+    h3 {
+        color: #3498db;
+        margin: 20px 0 10px;
+    }
+    
+    .info-box {
+        background: #ecf0f1;
+        border-left: 5px solid #3498db;
+        padding: 15px 20px;
+        margin: 15px 0;
+        border-radius: 5px;
+    }
+    
+    .info-box ul { margin-left: 20px; }
+    .info-box li { margin: 5px 0; }
+    
+    .converter {
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        padding: 25px;
+        border-radius: 15px;
+        margin: 20px 0;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .converter input {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        border: 2px solid #3498db;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        transition: all 0.3s;
+    }
+    
+    .converter input:focus {
+        outline: none;
+        border-color: #e74c3c;
+        box-shadow: 0 0 10px rgba(231,76,60,0.3);
+    }
+    
+    .converter button {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s;
+        margin-right: 10px;
+    }
+    
+    .converter button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(231,76,60,0.4);
+    }
+    
+    .converter button.secondary {
+        background: linear-gradient(135deg, #27ae60, #229954);
+    }
+    
+    .result {
+        margin-top: 20px;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        min-height: 50px;
+    }
+    
+    .step {
+        background: #fff;
+        border: 2px solid #3498db;
+        padding: 12px 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        opacity: 0;
+        transform: translateX(-50px);
+        animation: slideIn 0.5s forwards;
+        font-family: 'Courier New', monospace;
+    }
+    
+    .step:nth-child(1) { animation-delay: 0.1s; }
+    .step:nth-child(2) { animation-delay: 0.3s; }
+    .step:nth-child(3) { animation-delay: 0.5s; }
+    .step:nth-child(4) { animation-delay: 0.7s; }
+    .step:nth-child(5) { animation-delay: 0.9s; }
+    .step:nth-child(6) { animation-delay: 1.1s; }
+    .step:nth-child(7) { animation-delay: 1.3s; }
+    .step:nth-child(8) { animation-delay: 1.5s; }
+    
+    @keyframes slideIn {
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .step .num {
+        display: inline-block;
+        background: #3498db;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 30px;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+    
+    .final-result {
+        background: linear-gradient(135deg, #27ae60, #229954);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 1.5em;
+        font-weight: bold;
+        animation: bounceIn 0.8s;
+    }
+    
+    @keyframes bounceIn {
+        0% { transform: scale(0); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    
+    .binary-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin: 15px 0;
+    }
+    
+    .bit {
+        background: #3498db;
+        color: white;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 18px;
+        animation: flipIn 0.5s backwards;
+    }
+    
+    .bit:nth-child(1) { animation-delay: 0.1s; }
+    .bit:nth-child(2) { animation-delay: 0.2s; }
+    .bit:nth-child(3) { animation-delay: 0.3s; }
+    .bit:nth-child(4) { animation-delay: 0.4s; }
+    .bit:nth-child(5) { animation-delay: 0.5s; }
+    .bit:nth-child(6) { animation-delay: 0.6s; }
+    .bit:nth-child(7) { animation-delay: 0.7s; }
+    .bit:nth-child(8) { animation-delay: 0.8s; }
+    
+    @keyframes flipIn {
+        from { transform: rotateY(90deg); opacity: 0; }
+        to { transform: rotateY(0); opacity: 1; }
+    }
+    
+    .bit.one { background: #e74c3c; }
+    .bit.zero { background: #95a5a6; }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    th {
+        background: #3498db;
+        color: white;
+        padding: 12px;
+        text-align: center;
+    }
+    
+    td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #ecf0f1;
+    }
+    
+    tr:hover { background: #f5f7fa; }
+    
+    .units-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+    
+    .unit-card {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    
+    .unit-card:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    
+    .unit-card .icon { font-size: 2em; margin-bottom: 10px; }
+    .unit-card h4 { margin-bottom: 5px; }
+    
+    footer {
+        background: #2c3e50;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .highlight { color: #e74c3c; font-weight: bold; }
+    .code { 
+        background: #2c3e50; 
+        color: #ecf0f1; 
+        padding: 2px 8px; 
+        border-radius: 4px; 
+        font-family: 'Courier New', monospace;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🔢 Codage & Décodage</h1>
+        <p>Page Éducative - Conversions Numériques</p>
+        <div class="prof">👨‍🏫 Professeur : <strong>AHMED ZAGHDOUD</strong></div>
+    </header>
+    
+    <nav>
+        <button class="active" onclick="showSection('intro', this)">🏠 Introduction</button>
+        <button onclick="showSection('unites', this)">💾 Unités</button>
+        <button onclick="showSection('b16', this)">🔷 Base 16 → Autres</button>
+        <button onclick="showSection('b10', this)">🔶 Base 10 → Autres</button>
+        <button onclick="showSection('b8', this)">🟢 Base 8 → Autres</button>
+        <button onclick="showSection('b2', this)">⚫ Base 2 → Autres</button>
+    </nav>
+    
+    <!-- INTRODUCTION -->
+    <div id="intro" class="section active">
+        <h2>📘 Introduction au Codage et Décodage</h2>
+        
+        <div class="info-box">
+            <h3>🎯 Qu'est-ce que le Codage ?</h3>
+            <p>Le <span class="highlight">codage</span> est le processus de conversion d'informations dans un format spécifique (comme binaire ou hexadécimal) pour les rendre compatibles avec un système informatique. Il permet de préparer les données pour le stockage, la transmission, ou le traitement.</p>
+        </div>
+        
+        <div class="info-box">
+            <h3>🎯 Qu'est-ce que le Décodage ?</h3>
+            <p>Le <span class="highlight">décodage</span> est le processus de conversion des données codées dans leur format d'origine pour les rendre compréhensibles. Il permet de récupérer l'information initiale après avoir été transformée pour un usage informatique.</p>
+        </div>
+        
+        <h3>📚 Les Bases Numériques</h3>
+        <table>
+            <tr><th>Base</th><th>Nom</th><th>Chiffres utilisés</th><th>Exemple</th></tr>
+            <tr><td>2</td><td>Binaire</td><td>0, 1</td><td>11010</td></tr>
+            <tr><td>8</td><td>Octal</td><td>0-7</td><td>32</td></tr>
+            <tr><td>10</td><td>Décimal</td><td>0-9</td><td>26</td></tr>
+            <tr><td>16</td><td>Hexadécimal</td><td>0-9, A-F</td><td>1A</td></tr>
+        </table>
+    </div>
+    
+    <!-- UNITES -->
+    <div id="unites" class="section">
+        <h2>💾 Conversion des Unités de Données</h2>
+        
+        <div class="units-grid">
+            <div class="unit-card">
+                <div class="icon">🔹</div>
+                <h4>Bit</h4>
+                <p>Plus petite unité</p>
+            </div>
+            <div class="unit-card">
+                <div class="icon">📦</div>
+                <h4>Octet</h4>
+                <p>1 Octet = 8 Bits</p>
+            </div>
+            <div class="unit-card">
+                <div class="icon">📁</div>
+                <h4>Kilooctet (Ko)</h4>
+                <p>1 Ko = 1024 Octets</p>
+            </div>
+            <div class="unit-card">
+                <div class="icon">💿</div>
+                <h4>Mégaoctet (Mo)</h4>
+                <p>1 Mo = 1024 Ko</p>
+            </div>
+            <div class="unit-card">
+                <div class="icon">💾</div>
+                <h4>Gigaoctet (Go)</h4>
+                <p>1 Go = 1024 Mo</p>
+            </div>
+            <div class="unit-card">
+                <div class="icon">🗄️</div>
+                <h4>Téraoctet (To)</h4>
+                <p>1 To = 1024 Go</p>
+            </div>
+        </div>
+        
+        <div class="converter">
+            <h3>🔄 Convertisseur d'Unités</h3>
+            <input type="number" id="unitValue" placeholder="Entrez une valeur..." value="1024">
+            <select id="unitFrom" style="padding:12px; font-size:16px; margin-right:10px; border-radius:8px;">
+                <option value="bit">Bit</option>
+                <option value="octet">Octet</option>
+                <option value="ko">Kilooctet</option>
+                <option value="mo" selected>Mégaoctet</option>
+                <option value="go">Gigaoctet</option>
+                <option value="to">Téraoctet</option>
+            </select>
+            <select id="unitTo" style="padding:12px; font-size:16px; border-radius:8px;">
+                <option value="bit">Bit</option>
+                <option value="octet">Octet</option>
+                <option value="ko">Kilooctet</option>
+                <option value="mo">Mégaoctet</option>
+                <option value="go" selected>Gigaoctet</option>
+                <option value="to">Téraoctet</option>
+            </select>
+            <br><br>
+            <button onclick="convertUnits()">Convertir</button>
+            <div id="unitResult" class="result"></div>
+        </div>
+    </div>
+    
+    <!-- BASE 16 -->
+    <div id="b16" class="section">
+        <h2>🔷 Conversion de la Base 16 (Hexadécimal)</h2>
+        
+        <h3>1️⃣ Base 16 → Base 10 (Décodage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong> Multiplier chaque chiffre par 16 élevé à la puissance de sa position (en commençant à droite avec la position 0), puis additionner.
+        </div>
+        <div class="converter">
+            <input type="text" id="hex16to10" placeholder="Ex: 1A" value="1A">
+            <button onclick="convertHexToDec()">Convertir en Décimal</button>
+            <div id="hex16to10Result" class="result"></div>
+        </div>
+        
+        <h3>2️⃣ Base 16 → Base 8 (Décodage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong> 
+            <ol style="margin-left:20px;">
+                <li>Convertir le nombre hexadécimal en base 2</li>
+                <li>Regrouper les bits par groupes de 3 (de la droite)</li>
+                <li>Convertir chaque groupe en équivalent octal</li>
+            </ol>
+        </div>
+        <div class="converter">
+            <input type="text" id="hex16to8" placeholder="Ex: 1A" value="1A">
+            <button onclick="convertHexToOct()">Convertir en Octal</button>
+            <div id="hex16to8Result" class="result"></div>
+        </div>
+        
+        <h3>3️⃣ Base 16 → Base 2 (Décodage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong> Remplacer chaque chiffre hexadécimal par son équivalent binaire sur 4 bits.
+        </div>
+        <div class="converter">
+            <input type="text" id="hex16to2" placeholder="Ex: 1A" value="1A">
+            <button onclick="convertHexToBin()">Convertir en Binaire</button>
+            <div id="hex16to2Result" class="result"></div>
+        </div>
+    </div>
+    
+    <!-- BASE 10 -->
+    <div id="b10" class="section">
+        <h2>🔶 Conversion de la Base 10 (Décimal)</h2>
+        
+        <h3>1️⃣ Base 10 → Base 16 (Codage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong> Diviser le nombre par 16, prendre le reste à chaque étape. Continuer jusqu'à quotient = 0.
+        </div>
+        <div class="converter">
+            <input type="number" id="dec10to16" placeholder="Ex: 26" value="26">
+            <button onclick="convertDecToHex()">Convertir en Hexadécimal</button>
+            <div id="dec10to16Result" class="result"></div>
+        </div>
+        
+        <h3>2️⃣ Base 10 → Base 8 (Codage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong> Diviser le nombre par 8, prendre le reste à chaque étape. Continuer jusqu'à quotient = 0.
+        </div>
+        <div class="converter">
+            <input type="number" id="dec10to8" placeholder="Ex: 26" value="26">
+            <button onclick="convertDecToOct()">Convertir en Octal</button>
+            <div id="dec10to8Result" class="result"></div>
+        </div>
+        
+        <h3>3️⃣ Base 10 → Base 2 (Codage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong> Diviser le nombre par 2, prendre le reste à chaque étape. Continuer jusqu'à quotient = 0.
+        </div>
+        <div class="converter">
+            <input type="number" id="dec10to2" placeholder="Ex: 26" value="26">
+            <button onclick="convertDecToBin()">Convertir en Binaire</button>
+            <div id="dec10to2Result" class="result"></div>
+        </div>
+    </div>
+    
+    <!-- BASE 8 -->
+    <div id="b8" class="section">
+        <h2>🟢 Conversion de la Base 8 (Octal)</h2>
+        
+        <h3>1️⃣ Base 8 → Base 16 (Décodage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong>
+            <ol style="margin-left:20px;">
+                <li>Convertir en binaire (chaque chiffre octal → 3 bits)</li>
+                <li>Regrouper les bits par 4 (de la droite)</li>
+                <li>Convertir chaque groupe en hexadécimal</li>
+            </ol>
+        </div>
+        <div class="converter">
+            <input type="text" id="oct8to16" placeholder="Ex: 32" value="32">
+            <button onclick="convertOctToHex()">Convertir en Hexadécimal</button>
+            <div id="oct8to16Result" class="result"></div>
+        </div>
+        
+        <h3>2️⃣ Base 8 → Base 10 (Décodage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong> Multiplier chaque chiffre par 8 élevé à la puissance de sa position, puis additionner.
+        </div>
+        <div class="converter">
+            <input type="text" id="oct8to10" placeholder="Ex: 32" value="32">
+            <button onclick="convertOctToDec()">Convertir en Décimal</button>
+            <div id="oct8to10Result" class="result"></div>
+        </div>
+        
+        <h3>3️⃣ Base 8 → Base 2 (Décodage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong> Remplacer chaque chiffre octal par son équivalent binaire sur 3 bits.
+        </div>
+        <div class="converter">
+            <input type="text" id="oct8to2" placeholder="Ex: 32" value="32">
+            <button onclick="convertOctToBin()">Convertir en Binaire</button>
+            <div id="oct8to2Result" class="result"></div>
+        </div>
+    </div>
+    
+    <!-- BASE 2 -->
+    <div id="b2" class="section">
+        <h2>⚫ Conversion de la Base 2 (Binaire)</h2>
+        
+        <h3>1️⃣ Base 2 → Base 16 (Codage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong>
+            <ol style="margin-left:20px;">
+                <li>Regrouper les bits par 4 (de la droite)</li>
+                <li>Convertir chaque groupe en hexadécimal</li>
+            </ol>
+        </div>
+        <div class="converter">
+            <input type="text" id="bin2to16" placeholder="Ex: 11010" value="11010">
+            <button onclick="convertBinToHex()">Convertir en Hexadécimal</button>
+            <div id="bin2to16Result" class="result"></div>
+        </div>
+        
+        <h3>2️⃣ Base 2 → Base 10 (Décodage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong> Multiplier chaque chiffre binaire par 2 élevé à la puissance de sa position (en partant de 0 à droite), puis additionner.
+        </div>
+        <div class="converter">
+            <input type="text" id="bin2to10" placeholder="Ex: 11010" value="11010">
+            <button onclick="convertBinToDec()">Convertir en Décimal</button>
+            <div id="bin2to10Result" class="result"></div>
+        </div>
+        
+        <h3>3️⃣ Base 2 → Base 8 (Codage)</h3>
+        <div class="info-box">
+            <strong>Règle :</strong>
+            <ol style="margin-left:20px;">
+                <li>Regrouper les bits par 3 (de la droite)</li>
+                <li>Convertir chaque groupe en octal</li>
+            </ol>
+        </div>
+        <div class="converter">
+            <input type="text" id="bin2to8" placeholder="Ex: 11010" value="11010">
+            <button onclick="convertBinToOct()">Convertir en Octal</button>
+            <div id="bin2to8Result" class="result"></div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>📚 Page Éducative - Codage & Décodage</p>
+        <p>👨‍🏫 Professeur : <strong>AHMED ZAGHDOUD</strong></p>
+        <p>© 2026 - Tous droits réservés</p>
+    </footer>
+</div>
+
+<script>
+function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+}
+
+// === UNITÉS ===
+function convertUnits() {
+    const val = parseFloat(document.getElementById('unitValue').value);
+    const from = document.getElementById('unitFrom').value;
+    const to = document.getElementById('unitTo').value;
+    
+    const factors = { bit: 1/8, octet: 1, ko: 1024, mo: 1024*1024, go: 1024*1024*1024, to: 1024*1024*1024*1024 };
+    const bytes = val * factors[from];
+    const result = bytes / factors[to];
+    
+    const names = { bit: 'Bits', octet: 'Octets', ko: 'Kilooctets', mo: 'Mégaoctets', go: 'Gigaoctets', to: 'Téraoctets' };
+    
+    document.getElementById('unitResult').innerHTML = `
+        <div class="step"><span class="num">1</span> ${val} ${names[from]} = ${bytes} Octets</div>
+        <div class="step"><span class="num">2</span> ${bytes} Octets ÷ ${factors[to]} = ${result} ${names[to]}</div>
+        <div class="final-result">✅ ${val} ${names[from]} = ${result} ${names[to]}</div>
+    `;
+}
+
+// === BASE 16 → BASE 10 ===
+function convertHexToDec() {
+    const hex = document.getElementById('hex16to10').value.toUpperCase();
+    const hexMap = {'0':0,'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'A':10,'B':11,'C':12,'D':13,'E':14,'F':15};
+    let result = 0;
+    let steps = '';
+    let stepNum = 1;
+    
+    for (let i = 0; i < hex.length; i++) {
+        const pos = hex.length - 1 - i;
+        const digit = hex[i];
+        const value = hexMap[digit];
+        const calc = value * Math.pow(16, pos);
+        result += calc;
+        steps += `<div class="step"><span class="num">${stepNum++}</span> ${digit} × 16^${pos} = ${value} × ${Math.pow(16, pos)} = ${calc}</div>`;
+    }
+    
+    document.getElementById('hex16to10Result').innerHTML = steps + 
+        `<div class="final-result">✅ ${hex}(16) = ${result}(10)</div>`;
+}
+
+// === BASE 16 → BASE 8 ===
+function convertHexToOct() {
+    const hex = document.getElementById('hex16to8').value.toUpperCase();
+    const hexToBin = {'0':'0000','1':'0001','2':'0010','3':'0011','4':'0100','5':'0101','6':'0110','7':'0111','8':'1000','9':'1001','A':'1010','B':'1011','C':'1100','D':'1101','E':'1110','F':'1111'};
+    
+    let bin = '';
+    let step1 = '<div class="step"><span class="num">1</span> Conversion en binaire : ';
+    for (let c of hex) { bin += hexToBin[c]; step1 += `${c}→${hexToBin[c]} `; }
+    step1 += `= ${bin}</div>`;
+    
+    while (bin.length % 3 !== 0) bin = '0' + bin;
+    let oct = '';
+    let step2 = '<div class="step"><span class="num">2</span> Groupes de 3 bits : ';
+    for (let i = 0; i < bin.length; i += 3) {
+        const group = bin.substr(i, 3);
+        oct += parseInt(group, 2);
+        step2 += `[${group}=${parseInt(group, 2)}] `;
+    }
+    step2 += '</div>';
+    
+    document.getElementById('hex16to8Result').innerHTML = step1 + step2 + 
+        `<div class="final-result">✅ ${hex}(16) = ${oct}(8)</div>`;
+}
+
+// === BASE 16 → BASE 2 ===
+function convertHexToBin() {
+    const hex = document.getElementById('hex16to2').value.toUpperCase();
+    const hexToBin = {'0':'0000','1':'0001','2':'0010','3':'0011','4':'0100','5':'0101','6':'0110','7':'0111','8':'1000','9':'1001','A':'1010','B':'1011','C':'1100','D':'1101','E':'1110','F':'1111'};
+    
+    let steps = '<div class="step"><span class="num">1</span> Remplacement de chaque chiffre :<br>';
+    let bin = '';
+    for (let c of hex) { 
+        bin += hexToBin[c]; 
+        steps += `${c} → <span class="code">${hexToBin[c]}</span> &nbsp; `;
+    }
+    steps += '</div>';
+    
+    let display = '<div class="binary-display">';
+    for (let b of bin) {
+        display += `<div class="bit ${b === '1' ? 'one' : 'zero'}">${b}</div>`;
+    }
+    display += '</div>';
+    
+    document.getElementById('hex16to2Result').innerHTML = steps + display + 
+        `<div class="final-result">✅ ${hex}(16) = ${bin.replace(/^0+/, '')}(2)</div>`;
+}
+
+// === BASE 10 → BASE 16 ===
+function convertDecToHex() {
+    let num = parseInt(document.getElementById('dec10to16').value);
+    const original = num;
+    const hexChars = '0123456789ABCDEF';
+    let steps = '';
+    let result = '';
+    let stepNum = 1;
+    
+    if (num === 0) {
+        document.getElementById('dec10to16Result').innerHTML = `<div class="final-result">✅ 0(10) = 0(16)</div>`;
+        return;
+    }
+    
+    while (num > 0) {
+        const remainder = num % 16;
+        const quotient = Math.floor(num / 16);
+        result = hexChars[remainder] + result;
+        steps += `<div class="step"><span class="num">${stepNum++}</span> ${num} ÷ 16 = ${quotient}, reste = <span class="highlight">${remainder}</span> → ${hexChars[remainder]}</div>`;
+        num = quotient;
+    }
+    
+    document.getElementById('dec10to16Result').innerHTML = steps + 
+        `<div class="final-result">✅ ${original}(10) = ${result}(16)</div>`;
+}
+
+// === BASE 10 → BASE 8 ===
+function convertDecToOct() {
+    let num = parseInt(document.getElementById('dec10to8').value);
+    const original = num;
+    let steps = '';
+    let result = '';
+    let stepNum = 1;
+    
+    if (num === 0) {
+        document.getElementById('dec10to8Result').innerHTML = `<div class="final-result">✅ 0(10) = 0(8)</div>`;
+        return;
+    }
+    
+    while (num > 0) {
+        const remainder = num % 8;
+        const quotient = Math.floor(num / 8);
+        result = remainder + result;
+        steps += `<div class="step"><span class="num">${stepNum++}</span> ${num} ÷ 8 = ${quotient}, reste = <span class="highlight">${remainder}</span></div>`;
+        num = quotient;
+    }
+    
+    document.getElementById('dec10to8Result').innerHTML = steps + 
+        `<div class="final-result">✅ ${original}(10) = ${result}(8)</div>`;
+}
+
+// === BASE 10 → BASE 2 ===
+function convertDecToBin() {
+    let num = parseInt(document.getElementById('dec10to2').value);
+    const original = num;
+    let steps = '';
+    let result = '';
+    let stepNum = 1;
+    
+    if (num === 0) {
+        document.getElementById('dec10to2Result').innerHTML = `<div class="final-result">✅ 0(10) = 0(2)</div>`;
+        return;
+    }
+    
+    while (num > 0) {
+        const remainder = num % 2;
+        const quotient = Math.floor(num / 2);
+        result = remainder + result;
+        steps += `<div class="step"><span class="num">${stepNum++}</span> ${num} ÷ 2 = ${quotient}, reste = <span class="highlight">${remainder}</span></div>`;
+        num = quotient;
+    }
+    
+    let display = '<div class="binary-display">';
+    for (let b of result) {
+        display += `<div class="bit ${b === '1' ? 'one' : 'zero'}">${b}</div>`;
+    }
+    display += '</div>';
+    
+    document.getElementById('dec10to2Result').innerHTML = steps + display + 
+        `<div class="final-result">✅ ${original}(10) = ${result}(2)</div>`;
+}
+
+// === BASE 8 → BASE 16 ===
+function convertOctToHex() {
+    const oct = document.getElementById('oct8to16').value;
+    const octToBin = {'0':'000','1':'001','2':'010','3':'011','4':'100','5':'101','6':'110','7':'111'};
+    
+    let bin = '';
+    let step1 = '<div class="step"><span class="num">1</span> Conversion en binaire : ';
+    for (let c of oct) { bin += octToBin[c]; step1 += `${c}→${octToBin[c]} `; }
+    step1 += `= ${bin}</div>`;
+    
+    while (bin.length % 4 !== 0) bin = '0' + bin;
+    const binToHex = {'0000':'0','0001':'1','0010':'2','0011':'3','0100':'4','0101':'5','0110':'6','0111':'7','1000':'8','1001':'9','1010':'A','1011':'B','1100':'C','1101':'D','1110':'E','1111':'F'};
+    
+    let hex = '';
+    let step2 = '<div class="step"><span class="num">2</span> Groupes de 4 bits : ';
+    for (let i = 0; i < bin.length; i += 4) {
+        const group = bin.substr(i, 4);
+        hex += binToHex[group];
+        step2 += `[${group}=${binToHex[group]}] `;
+    }
+    step2 += '</div>';
+    
+    document.getElementById('oct8to16Result').innerHTML = step1 + step2 + 
+        `<div class="final-result">✅ ${oct}(8) = ${hex}(16)</div>`;
+}
+
+// === BASE 8 → BASE 10 ===
+function convertOctToDec() {
+    const oct = document.getElementById('oct8to10').value;
+    let result = 0;
+    let steps = '';
+    let stepNum = 1;
+    
+    for (let i = 0; i < oct.length; i++) {
+        const pos = oct.length - 1 - i;
+        const digit = parseInt(oct[i]);
+        const calc = digit * Math.pow(8, pos);
+        result += calc;
+        steps += `<div class="step"><span class="num">${stepNum++}</span> ${digit} × 8^${pos} = ${digit} × ${Math.pow(8, pos)} = ${calc}</div>`;
+    }
+    
+    document.getElementById('oct8to10Result').innerHTML = steps + 
+        `<div class="final-result">✅ ${oct}(8) = ${result}(10)</div>`;
+}
+
+// === BASE 8 → BASE 2 ===
+function convertOctToBin() {
+    const oct = document.getElementById('oct8to2').value;
+    const octToBin = {'0':'000','1':'001','2':'010','3':'011','4':'100','5':'101','6':'110','7':'111'};
+    
+    let steps = '<div class="step"><span class="num">1</span> Remplacement :<br>';
+    let bin = '';
+    for (let c of oct) { 
+        bin += octToBin[c]; 
+        steps += `${c} → <span class="code">${octToBin[c]}</span> &nbsp; `;
+    }
+    steps += '</div>';
+    
+    let display = '<div class="binary-display">';
+    for (let b of bin) {
+        display += `<div class="bit ${b === '1' ? 'one' : 'zero'}">${b}</div>`;
+    }
+    display += '</div>';
+    
+    document.getElementById('oct8to2Result').innerHTML = steps + display + 
+        `<div class="final-result">✅ ${oct}(8) = ${bin.replace(/^0+/, '')}(2)</div>`;
+}
+
+// === BASE 2 → BASE 16 ===
+function convertBinToHex() {
+    let bin = document.getElementById('bin2to16').value;
+    const binToHex = {'0000':'0','0001':'1','0010':'2','0011':'3','0100':'4','0101':'5','0110':'6','0111':'7','1000':'8','1001':'9','1010':'A','1011':'B','1100':'C','1101':'D','1110':'E','1111':'F'};
+    
+    while (bin.length % 4 !== 0) bin = '0' + bin;
+    
+    let hex = '';
+    let steps = '<div class="step"><span class="num">1</span> Groupes de 4 bits :<br>';
+    for (let i = 0; i < bin.length; i += 4) {
+        const group = bin.substr(i, 4);
+        hex += binToHex[group];
+        steps += `[${group} = <span class="code">${binToHex[group]}</span>] &nbsp; `;
+    }
+    steps += '</div>';
+    
+    document.getElementById('bin2to16Result').innerHTML = steps + 
+        `<div class="final-result">✅ ${bin.replace(/^0+/, '')}(2) = ${hex}(16)</div>`;
+}
+
+// === BASE 2 → BASE 10 ===
+function convertBinToDec() {
+    const bin = document.getElementById('bin2to10').value;
+    let result = 0;
+    let steps = '';
+    let stepNum = 1;
+    
+    for (let i = 0; i < bin.length; i++) {
+        const pos = bin.length - 1 - i;
+        const digit = parseInt(bin[i]);
+        const calc = digit * Math.pow(2, pos);
+        result += calc;
+        steps += `<div class="step"><span class="num">${stepNum++}</span> ${digit} × 2^${pos} = ${calc}</div>`;
+    }
+    
+    let display = '<div class="binary-display">';
+    for (let b of bin) {
+        display += `<div class="bit ${b === '1' ? 'one' : 'zero'}">${b}</div>`;
+    }
+    display += '</div>';
+    
+    document.getElementById('bin2to10Result').innerHTML = steps + display + 
+        `<div class="final-result">✅ ${bin}(2) = ${result}(10)</div>`;
+}
+
+// === BASE 2 → BASE 8 ===
+function convertBinToOct() {
+    let bin = document.getElementById('bin2to8').value;
+    
+    while (bin.length % 3 !== 0) bin = '0' + bin;
+    
+    let oct = '';
+    let steps = '<div class="step"><span class="num">1</span> Groupes de 3 bits :<br>';
+    for (let i = 0; i < bin.length; i += 3) {
+        const group = bin.substr(i, 3);
+        const val = parseInt(group, 2);
+        oct += val;
+        steps += `[${group} = <span class="code">${val}</span>] &nbsp; `;
+    }
+    steps += '</div>';
+    
+    document.getElementById('bin2to8Result').innerHTML = steps + 
+        `<div class="final-result">✅ ${bin.replace(/^0+/, '')}(2) = ${oct}(8)</div>`;
+}
+</script>
+
+</body>
+</html>
